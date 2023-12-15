@@ -1,0 +1,4 @@
+com/bezkoder/spring/datajpa/controller/FunkoPopController.class
+com/bezkoder/spring/datajpa/model/FunkoPop.class
+com/bezkoder/spring/datajpa/repository/FunkoPopRepository.class
+com/bezkoder/spring/datajpa/SpringBootDataJpaApplication.class
