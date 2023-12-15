@@ -9,11 +9,10 @@
 		<version>3.1.0</version>
 		<relativePath />
 	</parent>
-	<groupId>com.bezkoder</groupId>
-	<artifactId>spring-boot-data-jpa</artifactId>
+	<groupId>com.funkostore</groupId>
+	<artifactId>funkostore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-boot-data-jpa</name>
-	<description>Demo project for Spring Boot Apis CRUD using Spring Data JPA</description>
+	<name>funkostore</name>
 
 	<properties>
 		<java.version>17</java.version>

@@ -1,10 +1,10 @@
-package com.bezkoder.spring.datajpa.repository;
+package com.funkostore.spring.datajpa.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.bezkoder.spring.datajpa.model.FunkoPop;
+import com.funkostore.spring.datajpa.model.FunkoPop;
 
 public interface FunkoPopRepository extends JpaRepository<FunkoPop, Long> {
 	List<FunkoPop> findByAvailable(boolean available);
