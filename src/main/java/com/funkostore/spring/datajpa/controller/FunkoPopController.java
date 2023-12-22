@@ -1,8 +1,15 @@
 package com.funkostore.spring.datajpa.controller;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.funkostore.spring.datajpa.model.FunkoPop;
 import com.funkostore.spring.datajpa.repository.FunkoPopRepository;
 
@@ -24,13 +35,48 @@ import com.funkostore.spring.datajpa.repository.FunkoPopRepository;
 @RequestMapping("/api")
 public class FunkoPopController {
 
+    private static final String NEWS_API_KEY = "e01b4e414eea401b900b5948e08c5f09";
+
+	private static final Logger LOGGER = Logger.getLogger(FunkoPopController.class.getName());
+
 	@Autowired
 	FunkoPopRepository funkoPopRepository;
 
-	@GetMapping("/hello")
-    public String getHello(){
-        return "index";
-    }    
+
+	//Lista noticias relacionadas ao Funko usando uma API externa
+	@GetMapping("/funkoNews")
+		public List<String> getFunkoNews() {
+			String keyword = "Funko";
+			String apiUrl = "https://newsapi.org/v2/everything?q=" + keyword + "&apiKey=" + NEWS_API_KEY;
+
+			HttpClient httpClient = HttpClient.newHttpClient();
+			ArrayList<String> titles = new ArrayList<>();
+
+			try {
+				HttpRequest request = HttpRequest.newBuilder()
+						.uri(URI.create(apiUrl))
+						.build();
+
+				HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+				LOGGER.log(Level.INFO, "Status Code: " + response.statusCode());
+
+				String responseBody = response.body();
+				ObjectMapper objectMapper = new ObjectMapper();
+				JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+				JsonNode articlesNode = jsonNode.path("articles");
+				for (JsonNode articleNode : articlesNode) {
+					titles.add(articleNode.path("title").asText());
+				}
+
+				LOGGER.log(Level.INFO, "News Titles: " + titles);
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Error: " + e.getMessage(), e);
+			}
+
+			return titles;
+		}
 
 	@GetMapping("/funkoPops")
 	public ResponseEntity<List<FunkoPop>> getAllFunkosPop(@RequestParam(required = false) String title) {

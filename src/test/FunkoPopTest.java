@@ -11,22 +11,21 @@ class FunkoPopTest {
 
     @Test
     void testCreateFunkoPop() {
-        
-        FunkoPopController controller = new FunkoPopController(mock(FunkoPopRepository.class));
-
-        
+        FunkoPopRepository repositoryMock = mock(FunkoPopRepository.class);
+    
+        when(repositoryMock.save(Mockito.any(FunkoPop.class))).thenReturn(new FunkoPop("Nome", "Descrição", 100.0, false));
+    
+        FunkoPopController controller = new FunkoPopController(repositoryMock);
+    
         FunkoPop funkoPop = new FunkoPop("Nome", "Descrição", 100.0, false);
-        controller.createFunkoPop(funkoPop);
-
-        
-        mock(FunkoPopRepository).save(funkoPop);
-
-        
-        assertEquals(funkoPop, controller.createFunkoPop(funkoPop).getBody());
+    
+        when(repositoryMock.save(funkoPop)).thenThrow(FunkoPopCreationException.class);
+    
+        assertThrows(FunkoPopCreationException.class, () -> {
+            controller.createFunkoPop(funkoPop);
+        });
+    
+        Mockito.verify(repositoryMock, Mockito.times(1)).save(funkoPop);
     }
-
-    @SneakyThrows
-    private FunkoPopRepository mock(Class<FunkoPopRepository> clazz) {
-        return mock(FunkoPopRepository.class);
-    }
+    
 }
